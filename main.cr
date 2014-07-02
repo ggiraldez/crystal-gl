@@ -1,26 +1,11 @@
-require "lib_gl"
+require "gl"
 require "glfw"
 require "glew"
 
 def check_error(where="")
-  error = LibGL.get_error
-  if error != LibGL::NO_ERROR
-    message = case error
-    when LibGL::INVALID_ENUM
-      "INVALID_ENUM"
-    when LibGL::INVALID_VALUE
-      "INVALID_VALUE"
-    when LibGL::INVALID_OPERATION
-      "INVALID_OPERATION"
-    when LibGL::STACK_OVERFLOW
-      "STACK_OVERFLOW"
-    when LibGL::STACK_UNDERFLOW
-      "STACK_UNDERFLOW"
-    when LibGL::OUT_OF_MEMORY
-      "OUT_OF_MEMORY"
-    else
-    end
-    puts "GL error at #{where}: 0x#{error.to_s(16)} (#{message})"
+  error = GL.last_error
+  if error
+    puts "GL error at #{where}: 0x#{error.to_s(16)} (#{GL.last_error_message})"
   end
 end
 
@@ -53,7 +38,7 @@ unless GLEW.init == GLEW::OK
   GLFW.terminate
   exit 1
 end
-LibGL.get_error
+check_error "after GLEW initialization"
 
 GLFW.set_input_mode window, GLFW::STICKY_KEYS, 1
  
