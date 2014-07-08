@@ -70,46 +70,53 @@ end
 program = load_shaders
 
 
+# This is just data
+
 background_color = [0, 0, 0.4, 0]
 
 vertex_buffer_data = [-1, -1, 0,
                        1, -1, 0,
                        0,  1, 0].map {|x| x.to_f32}
 
+# Create and bind the VAO (vertex array object)
 LibGL.gen_vertex_arrays 1, out vertex_array_id
 LibGL.bind_vertex_array vertex_array_id
 
+# Create, bind and set the VBO (vertex buffer object) data
 LibGL.gen_buffers 1, out vertex_buffer
 LibGL.bind_buffer LibGL::ARRAY_BUFFER, vertex_buffer
 LibGL.buffer_data LibGL::ARRAY_BUFFER, vertex_buffer_data.length * sizeof(Float32), (vertex_buffer_data.buffer as Void*), LibGL::STATIC_DRAW
 
-check_error "after initialization"
+# Enable and configure the attribute 0 for the shader program
+LibGL.enable_vertex_attrib_array 0_u32
+#LibGL.bind_buffer LibGL::ARRAY_BUFFER, vertex_buffer
+LibGL.vertex_attrib_pointer 0_u32, 3, LibGL::FLOAT, LibGL::FALSE, 0, nil
 
+# Use the shader program
+program.use
 
 while true
+  # Clear the scene
   GL.clear_color background_color
   GL.clear
 
-  program.use
-
-  LibGL.enable_vertex_attrib_array 0_u32
-  LibGL.bind_buffer LibGL::ARRAY_BUFFER, vertex_buffer
-  LibGL.vertex_attrib_pointer 0_u32, 3, LibGL::FLOAT, LibGL::FALSE, 0, nil
-
+  # Draw the vertices
   LibGL.draw_arrays LibGL::TRIANGLES, 0, 3
    
-  LibGL.disable_vertex_attrib_array 0_u32
-
   check_error "after render"
 
+  # Swap buffers and do the GLFW events bookkeeping
   GLFW.swap_buffers window
   GLFW.poll_events
-
   if GLFW.get_key(window, GLFW::KEY_ESCAPE) == GLFW::PRESS && 
      GLFW.window_should_close(window)
     break
   end
 end
 
+# Disable the shader program attribute
+LibGL.disable_vertex_attrib_array 0_u32
+
+# Deinitialize GLFW
 GLFW.terminate
 
