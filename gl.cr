@@ -49,6 +49,14 @@ module GL
     LibGL.clear LibGL::COLOR_BUFFER_BIT
   end
 
+  def self.to_boolean(value)
+    if value
+      LibGL::TRUE
+    else
+      LibGL::FALSE
+    end
+  end
+
   class Shader
     def self.vertex(source = nil)
       shader = new LibGL::VERTEX_SHADER
@@ -125,6 +133,11 @@ module GL
     def use
       LibGL.use_program @program_id
       self
+    end
+
+    def set_uniform_matrix_4f(name, transpose, data : Float32*)
+      location = LibGL.get_uniform_location @program_id, name.cstr
+      LibGL.uniform_matrix_4fv location, 1, GL.to_boolean(transpose), data
     end
   end
 end

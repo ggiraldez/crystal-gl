@@ -77,5 +77,8 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   fun get_program_info_log = glGetProgramInfoLog(program : Uint, buf_size : Sizei, length : Sizei*, info_log : Char*) : Void
 
   fun use_program = glUseProgram(program : Uint) : Void
+
+  fun get_uniform_location = glGetUniformLocation(program : Uint, name : Char*) : Int
+  fun uniform_matrix_4fv = glUniformMatrix4fv(location : Int, count : Sizei, transpose : Boolean, value : Float*) : Void
 end
 

@@ -1,6 +1,7 @@
 require "gl"
 require "glfw"
 require "glew"
+require "glm"
 
 # Utility functions
 
@@ -10,6 +11,14 @@ def check_error(where="")
   end
 end
 
+def dump_mat4(m)
+  0.upto(3) { |i|
+    s = String.new_with_capacity(50) do |buffer|
+      C.sprintf(buffer, "%6.3f  %6.3f  %6.3f  %6.3f", m[i,0].to_f64, m[i,1].to_f64, m[i,2].to_f64, m[i,3].to_f64)
+    end
+    puts s
+  }
+end
 
 # Framework initialization (GLFW & GLEW)
 
@@ -72,7 +81,7 @@ program = load_shaders
 
 # This is just data
 
-background_color = [0, 0, 0.4, 0]
+background_color = [0, 0, 0.4]
 
 vertex_buffer_data = [-1, -1, 0,
                        1, -1, 0,
@@ -94,6 +103,24 @@ LibGL.vertex_attrib_pointer 0_u32, 3, LibGL::FLOAT, LibGL::FALSE, 0, nil
 
 # Use the shader program
 program.use
+
+# Setup ModelViewProjection matrix
+projection = GLM::Mat4.perspective 45.0, 4.0/3.0, 0.1, 100.0
+view = GLM::Mat4.look_at GLM::Vec3.new(4,3,3), GLM::Vec3.new(0,0,0), GLM::Vec3.new(0,1,0)
+model = GLM::Mat4.identity
+mvp = projection * view * model
+
+puts "Projection"
+dump_mat4 projection
+puts "View"
+dump_mat4 view
+puts "MVP"
+dump_mat4 mvp
+
+# Send the matrix to the shader program
+program.set_uniform_matrix_4f "MVP", false, mvp.buffer
+
+check_error "after set MVP uniform"
 
 while true
   # Clear the scene
