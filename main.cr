@@ -105,8 +105,8 @@ LibGL.vertex_attrib_pointer 0_u32, 3, LibGL::FLOAT, LibGL::FALSE, 0, nil
 program.use
 
 # Setup ModelViewProjection matrix
-projection = GLM::Mat4.perspective 45.0, 4.0/3.0, 0.1, 100.0
-view = GLM::Mat4.look_at GLM::Vec3.new(4,3,3), GLM::Vec3.new(0,0,0), GLM::Vec3.new(0,1,0)
+projection = GLM.perspective 45.0, 4.0/3.0, 0.1, 100.0
+view = GLM.look_at GLM.vec3(4,3,3), GLM.vec3(0,0,0), GLM.vec3(0,1,0)
 model = GLM::Mat4.identity
 mvp = projection * view * model
 
