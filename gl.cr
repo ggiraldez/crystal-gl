@@ -30,6 +30,10 @@ module GL
     end
   end
 
+  def self.version
+    String.new(LibGL.get_string(LibGL::VERSION))
+  end
+
   def self.clear_color color
     case color.size
     when 4
@@ -135,7 +139,7 @@ module GL
       self
     end
 
-    def set_uniform_matrix_4f(name, transpose, data : Float32*)
+    def set_uniform_matrix_4f(name, transpose, data)
       location = LibGL.get_uniform_location @program_id, name.cstr
       LibGL.uniform_matrix_4fv location, 1, GL.to_boolean(transpose), data
     end

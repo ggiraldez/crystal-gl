@@ -174,6 +174,10 @@ module GLM
       @buffer
     end
 
+    def to_unsafe
+      @buffer
+    end
+
     def [](i)
       raise IndexOutOfBounds.new if i < 0 || i >= 16
       @buffer[i]

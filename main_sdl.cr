@@ -1,43 +1,44 @@
+require "sdl_ext"
 require "gl"
-require "glfw"
-require "glew"
 require "glm"
+require "glew"
 require "utils"
 
-# Framework initialization (GLFW & GLEW)
+SDL.init
 
-unless GLFW.init
-  puts "Failed to initialize GLFW"
-  exit 1
-else
-  puts "GLFW initialization successful"
-end
+info = SDL.get_video_info
+pixel_format = info->vfmt
 
-GLFW.window_hint GLFW::SAMPLES, 4
-GLFW.window_hint GLFW::CONTEXT_VERSION_MAJOR, 3
-GLFW.window_hint GLFW::CONTEXT_VERSION_MINOR, 3
-GLFW.window_hint GLFW::OPENGL_FORWARD_COMPAT, 1
-GLFW.window_hint GLFW::OPENGL_PROFILE, GLFW::OPENGL_CORE_PROFILE
- 
-window = GLFW.create_window 1024, 768, "Crystal OpenGL", nil, nil
+raise "Cannot get video info" if info.nil?
 
-unless window
-  puts "Failed to open GLFW window"
-  GLFW.terminate
-  exit 1
-end
+puts "Flags: " + info->flags.to_s(2)
+puts "Video memory: " + info->video_mem.to_s
+puts "Palette: " + (pixel_format->palette.nil?.to_s ? "NO" : "YES")
+puts "BPP: " + pixel_format->bits_per_pixel.to_s
+puts "Screen dimensions: " + info->current_w.to_s + "x" + info->current_h.to_s
 
-GLFW.set_current_context window
+width = 1024
+height = 768
+bpp = pixel_format->bits_per_pixel
+
+SDL.gl_set_attribute(LibSDL::GLAttribute::GL_RED_SIZE, 5)
+SDL.gl_set_attribute(LibSDL::GLAttribute::GL_GREEN_SIZE, 5)
+SDL.gl_set_attribute(LibSDL::GLAttribute::GL_BLUE_SIZE, 5)
+SDL.gl_set_attribute(LibSDL::GLAttribute::GL_DEPTH_SIZE, 16)
+SDL.gl_set_attribute(LibSDL::GLAttribute::GL_DOUBLEBUFFER, 1)
+
+flags = LibSDL::OPENGL
+
+surface = SDL.set_video_mode(width, height, bpp.to_i32, flags)
+
+raise "Cannot set video mode" if surface.nil?
 
 GLEW.experimental = LibGL::TRUE
 unless GLEW.init == GLEW::OK
   puts "Failed to initialize GLEW"
-  GLFW.terminate
   exit 1
 end
 check_error "after GLEW initialization"
-
-GLFW.set_input_mode window, GLFW::STICKY_KEYS, 1
 
 puts "OpenGL version: " + GL.version
 
@@ -63,7 +64,6 @@ end
 
 program = load_shaders
 
-
 # This is just data
 
 background_color = [0, 0, 0.4]
@@ -74,20 +74,29 @@ vertex_buffer_data = [-1, -1, 0,
 
 # Create and bind the VAO (vertex array object)
 LibGL.gen_vertex_arrays 1, out vertex_array_id
+check_error "after creating VAO"
 LibGL.bind_vertex_array vertex_array_id
+
+check_error "after configuring VAO"
 
 # Create, bind and set the VBO (vertex buffer object) data
 LibGL.gen_buffers 1, out vertex_buffer
 LibGL.bind_buffer LibGL::ARRAY_BUFFER, vertex_buffer
 LibGL.buffer_data LibGL::ARRAY_BUFFER, vertex_buffer_data.length * sizeof(Float32), (vertex_buffer_data.buffer as Void*), LibGL::STATIC_DRAW
 
+check_error "after configuring VBO"
+
 # Enable and configure the attribute 0 for the shader program
 LibGL.enable_vertex_attrib_array 0_u32
 #LibGL.bind_buffer LibGL::ARRAY_BUFFER, vertex_buffer
 LibGL.vertex_attrib_pointer 0_u32, 3, LibGL::FLOAT, LibGL::FALSE, 0, nil
 
+check_error "after configuring VBO and VAO"
+
 # Use the shader program
 program.use
+
+check_error "after program use"
 
 # Setup ModelViewProjection matrix
 projection = GLM.perspective 45.0, 4.0/3.0, 0.1, 100.0
@@ -95,19 +104,29 @@ view = GLM.look_at GLM.vec3(4,3,3), GLM.vec3(0,0,0), GLM.vec3(0,1,0)
 model = GLM::Mat4.identity
 mvp = projection * view * model
 
-puts "Projection"
-dump_mat4 projection
-puts "View"
-dump_mat4 view
-puts "MVP"
-dump_mat4 mvp
+#puts "Projection"
+#dump_mat4 projection
+#puts "View"
+#dump_mat4 view
+#puts "MVP"
+#dump_mat4 mvp
 
 # Send the matrix to the shader program
 program.set_uniform_matrix_4f "MVP", false, mvp
 
 check_error "after set MVP uniform"
 
-while true
+frames = 0
+start = SDL.ticks
+running = true
+
+while running
+  SDL.poll_events do |event|
+    if event.type == LibSDL::QUIT || (event.type == LibSDL::KEYDOWN)
+      running = false
+    end
+  end
+
   # Clear the scene
   GL.clear_color background_color
   GL.clear
@@ -117,18 +136,17 @@ while true
    
   check_error "after render"
 
-  # Swap buffers and do the GLFW events bookkeeping
-  GLFW.swap_buffers window
-  GLFW.poll_events
-  if GLFW.get_key(window, GLFW::KEY_ESCAPE) == GLFW::PRESS && 
-     GLFW.window_should_close(window)
-    break
-  end
+  SDL.gl_swap_buffers
+
+  frames += 1
 end
 
 # Disable the shader program attribute
 LibGL.disable_vertex_attrib_array 0_u32
 
-# Deinitialize GLFW
-GLFW.terminate
+ms = SDL.ticks - start
+puts "#{frames} in #{ms} ms"
+puts "FPS: #{frames / (ms * 0.001)}"
+
+SDL.quit
 

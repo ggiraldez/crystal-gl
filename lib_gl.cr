@@ -44,7 +44,14 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   LINK_STATUS     = 0x8B82_u32
   INFO_LOG_LENGTH = 0x8B84_u32
 
+  VENDOR     = 0x1F00_u32
+  RENDERER   = 0x1F01_u32
+  VERSION    = 0x1F02_u32
+  EXTENSIONS = 0x1F03_u32
+  
   fun get_error = glGetError() : Enum
+
+  fun get_string = glGetString(name : Enum) : Ubyte*
 
   fun clear_color = glClearColor(red : Float, green : Float, blue : Float, alpha : Float) : Void
   fun clear = glClear(mask : Bitfield) : Void
