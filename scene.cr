@@ -2,7 +2,6 @@ require "gl"
 require "glm"
 require "utils"
 
-require "models/triangle"
 require "models/cube"
 
 class Scene
@@ -10,7 +9,9 @@ class Scene
     @background_color = [0, 0, 0.4]
 
     LibGL.gen_vertex_arrays 1, out @vertex_array_id
+
     LibGL.gen_buffers 1, out @vertex_buffer
+    LibGL.gen_buffers 1, out @color_buffer
 
     @program = load_shaders
     @model = Cube.new
@@ -19,7 +20,7 @@ class Scene
   def mvp
     # Setup ModelViewProjection matrix
     projection = GLM.perspective 45.0, 4.0/3.0, 0.1, 100.0
-    view = GLM.look_at GLM.vec3(4,3,3), GLM.vec3(0,0,0), GLM.vec3(0,1,0)
+    view = GLM.look_at GLM.vec3(4,3,-3), GLM.vec3(0,0,0), GLM.vec3(0,1,0)
     model = GLM::Mat4.identity
     mvp = projection * view * model
 
@@ -34,17 +35,26 @@ class Scene
   end
 
   def setup
-    # Create and bind the VAO (vertex array object)
+    # Bind the VAO (vertex array object)
     LibGL.bind_vertex_array @vertex_array_id
 
-    # Create, bind and set the VBO (vertex buffer object) data
+    # Bind and set the VBO (vertex buffer object) data
     LibGL.bind_buffer LibGL::ARRAY_BUFFER, @vertex_buffer
     LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.vertices.length * sizeof(Float32), (@model.vertices.buffer as Void*), LibGL::STATIC_DRAW
 
-    # Enable and configure the attribute 0 for the shader program
+    # Load the color data into the color_buffer
+    LibGL.bind_buffer LibGL::ARRAY_BUFFER, @color_buffer
+    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.colors.length * sizeof(Float32), (@model.colors.buffer as Void*), LibGL::STATIC_DRAW
+
+    # Enable and configure the attribute 0 for each vertex position
     LibGL.enable_vertex_attrib_array 0_u32
-    #LibGL.bind_buffer LibGL::ARRAY_BUFFER, vertex_buffer
+    LibGL.bind_buffer LibGL::ARRAY_BUFFER, @vertex_buffer
     LibGL.vertex_attrib_pointer 0_u32, 3, LibGL::FLOAT, LibGL::FALSE, 0, nil
+
+    # Enable and configure the attribute 1 for each vertex color
+    LibGL.enable_vertex_attrib_array 1_u32
+    LibGL.bind_buffer LibGL::ARRAY_BUFFER, @color_buffer
+    LibGL.vertex_attrib_pointer 1_u32, 3, LibGL::FLOAT, LibGL::FALSE, 0, nil
 
     # Use the shader program
     @program.use
@@ -53,12 +63,16 @@ class Scene
     @program.set_uniform_matrix_4f "MVP", false, mvp
 
     check_error "after set MVP uniform"
+
+    LibGL.enable LibGL::DEPTH_TEST
+    LibGL.depth_func LibGL::LESS
   end
 
   def render
     # Clear the scene
     GL.clear_color @background_color
-    GL.clear
+    #GL.clear
+    LibGL.clear LibGL::COLOR_BUFFER_BIT | LibGL::DEPTH_BUFFER_BIT
 
     # Draw the vertices
     LibGL.draw_arrays LibGL::TRIANGLES, 0, @model.vertices.length

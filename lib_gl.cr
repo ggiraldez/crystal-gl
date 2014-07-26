@@ -25,9 +25,22 @@ lib LibGL("`echo \"-framework OpenGL\"`")
 
   STATIC_DRAW = 0x88E4_u32
 
+  DEPTH_TEST = 0x0B71_u32
+
   TRIANGLES = 0x0004_u32
 
-  COLOR_BUFFER_BIT = 0x00004000_u32
+  DEPTH_BUFFER_BIT   = 0x00000100_u32
+  STENCIL_BUFFER_BIT = 0x00000400_u32
+  COLOR_BUFFER_BIT   = 0x00004000_u32
+
+  NEVER    = 0x0200_u32
+  LESS     = 0x0201_u32
+  EQUAL    = 0x0202_u32
+  LEQUAL   = 0x0203_u32
+  GREATER  = 0x0204_u32
+  NOTEQUAL = 0x0205_u32
+  GEQUAL   = 0x0206_u32
+  ALWAYS   = 0x0207_u32
 
   NO_ERROR          = 0_u32
   INVALID_ENUM      = 0x0500_u32
@@ -55,6 +68,9 @@ lib LibGL("`echo \"-framework OpenGL\"`")
 
   fun clear_color = glClearColor(red : Float, green : Float, blue : Float, alpha : Float) : Void
   fun clear = glClear(mask : Bitfield) : Void
+  fun enable = glEnable(cap : Enum) : Void
+  fun disable = glDisable(cap : Enum) : Void
+  fun depth_func = glDepthFunc(func : Enum) : Void
 
   fun gen_vertex_arrays = glGenVertexArrays(n : Sizei, ids : Uint*) : Void
   fun bind_vertex_array = glBindVertexArray(id : Uint) : Void
