@@ -2,18 +2,18 @@ require "gl"
 require "glm"
 require "utils"
 
+require "models/triangle"
+require "models/cube"
+
 class Scene
   def initialize
     @background_color = [0, 0, 0.4]
-
-    @vertex_buffer_data = [-1, -1, 0,
-                           1, -1, 0,
-                           0,  1, 0].map {|x| x.to_f32}
 
     LibGL.gen_vertex_arrays 1, out @vertex_array_id
     LibGL.gen_buffers 1, out @vertex_buffer
 
     @program = load_shaders
+    @model = Cube.new
   end
 
   def mvp
@@ -39,7 +39,7 @@ class Scene
 
     # Create, bind and set the VBO (vertex buffer object) data
     LibGL.bind_buffer LibGL::ARRAY_BUFFER, @vertex_buffer
-    LibGL.buffer_data LibGL::ARRAY_BUFFER, @vertex_buffer_data.length * sizeof(Float32), (@vertex_buffer_data.buffer as Void*), LibGL::STATIC_DRAW
+    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.vertices.length * sizeof(Float32), (@model.vertices.buffer as Void*), LibGL::STATIC_DRAW
 
     # Enable and configure the attribute 0 for the shader program
     LibGL.enable_vertex_attrib_array 0_u32
@@ -61,7 +61,7 @@ class Scene
     GL.clear
 
     # Draw the vertices
-    LibGL.draw_arrays LibGL::TRIANGLES, 0, 3
+    LibGL.draw_arrays LibGL::TRIANGLES, 0, @model.vertices.length
      
     check_error "after render"
   end
