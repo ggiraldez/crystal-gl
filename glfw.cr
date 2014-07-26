@@ -32,6 +32,8 @@ lib GLFW("glfw3")
   fun poll_events = glfwPollEvents() : Void
   fun get_key = glfwGetKey(window : Window, key : Int32) : Int32
   fun window_should_close = glfwWindowShouldClose(window : Window) : Int32
+
+  fun get_time = glfwGetTime() : Float64
 end
 
 
