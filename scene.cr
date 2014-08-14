@@ -8,7 +8,7 @@ class Scene
   def initialize
     @background_color = [0, 0, 0.4]
 
-    LibGL.gen_vertex_arrays 1, out @vertex_array_id
+    check_gl LibGL.gen_vertex_arrays 1, out @vertex_array_id
 
     LibGL.gen_buffers 1, out @vertex_buffer
     LibGL.gen_buffers 1, out @color_buffer
@@ -36,7 +36,7 @@ class Scene
 
   def setup
     # Bind the VAO (vertex array object)
-    LibGL.bind_vertex_array @vertex_array_id
+    check_gl LibGL.bind_vertex_array @vertex_array_id
 
     # Bind and set the VBO (vertex buffer object) data
     LibGL.bind_buffer LibGL::ARRAY_BUFFER, @vertex_buffer

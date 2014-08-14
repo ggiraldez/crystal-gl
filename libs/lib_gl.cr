@@ -105,3 +105,9 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   fun uniform_matrix_4fv = glUniformMatrix4fv(location : Int, count : Sizei, transpose : Boolean, value : Float*) : Void
 end
 
+macro check_gl(call)
+  value = {{call}}
+  raise "OpenGL call failed: " + {{call.stringify}} if LibGL.get_error != LibGL::NO_ERROR
+  value
+end
+
