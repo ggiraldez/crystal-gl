@@ -1,5 +1,11 @@
 require "lib_gl"
 
+macro gl_checked(call)
+  value = {{call}}
+  raise "OpenGL call failed: " + {{call.stringify}} if LibGL.get_error != LibGL::NO_ERROR
+  value
+end
+
 module GL
   def self.last_error
     @@last_error = LibGL.get_error

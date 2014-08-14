@@ -18,5 +18,9 @@ class TestApp < GlfwApp
   end
 end
 
-TestApp.new.run
+begin
+  TestApp.new.run
+rescue ex
+  puts "FATAL ERROR: #{ex}"
+end
 
