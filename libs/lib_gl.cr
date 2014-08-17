@@ -29,19 +29,12 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   FLOAT           = 0x1406_u32
   DOUBLE          = 0x140A_u32
 
-  ARRAY_BUFFER = 0x8892_u32
-
-  STATIC_DRAW = 0x88E4_u32
-
-  DEPTH_TEST = 0x0B71_u32
-  TEXTURE_2D = 0x0DE1_u32
-
-  TRIANGLES = 0x0004_u32
-
+  # AttribMask
   DEPTH_BUFFER_BIT   = 0x00000100_u32
   STENCIL_BUFFER_BIT = 0x00000400_u32
   COLOR_BUFFER_BIT   = 0x00004000_u32
 
+  # Alpha/Depth/Stencil Function
   NEVER    = 0x0200_u32
   LESS     = 0x0201_u32
   EQUAL    = 0x0202_u32
@@ -51,6 +44,10 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   GEQUAL   = 0x0206_u32
   ALWAYS   = 0x0207_u32
 
+  # BeginMode
+  TRIANGLES = 0x0004_u32
+
+  # ErrorCode
   NO_ERROR          = 0_u32
   INVALID_ENUM      = 0x0500_u32
   INVALID_VALUE     = 0x0501_u32
@@ -59,12 +56,9 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   STACK_UNDERFLOW   = 0x0504_u32
   OUT_OF_MEMORY     = 0x0505_u32
 
-  VERTEX_SHADER   = 0x8B31_u32
-  FRAGMENT_SHADER = 0x8B30_u32
-
-  COMPILE_STATUS  = 0x8B81_u32
-  LINK_STATUS     = 0x8B82_u32
-  INFO_LOG_LENGTH = 0x8B84_u32
+  # GetPName
+  DEPTH_TEST = 0x0B71_u32
+  TEXTURE_2D = 0x0DE1_u32
 
   # PixelFormat
   STENCIL_INDEX   = 0x1901_u32
@@ -98,6 +92,21 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   TEXTURE_WRAP_S     = 0x2802_u32
   TEXTURE_WRAP_T     = 0x2803_u32
 
+  # TextureWrapMode
+  REPEAT = 0x2901_u32
+
+  # OpenGL 1.5
+  ARRAY_BUFFER = 0x8892_u32
+  STATIC_DRAW  = 0x88E4_u32
+
+  # OpenGL 2.0
+  VERTEX_SHADER   = 0x8B31_u32
+  FRAGMENT_SHADER = 0x8B30_u32
+  COMPILE_STATUS  = 0x8B81_u32
+  LINK_STATUS     = 0x8B82_u32
+  INFO_LOG_LENGTH = 0x8B84_u32
+
+  # OpenGL 3.0
   NUM_EXTENSIONS = 0x821D_u32
 
   # Utility functions
@@ -132,6 +141,7 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   fun bind_texture = glBindTexture(target : Enum, texure : Uint) : Void
   fun tex_image_2d = glTexImage2D(target : Enum, level : Int, internal_format : Uint, width : Sizei, height : Sizei, border : Int, format : Enum, type : Enum, pixels : Void*) : Void
   fun tex_parameteri = glTexParameteri(target : Enum, pname : Enum, param : Int) : Void
+  fun generate_mipmap = glGenerateMipmap(target : Enum) : Void
 
   # Shaders and programs
   fun create_shader = glCreateShader(type : Enum) : Uint

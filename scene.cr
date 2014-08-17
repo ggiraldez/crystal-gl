@@ -106,8 +106,9 @@ class Scene
     LibGL.gen_textures 1, out tex_id
     LibGL.bind_texture LibGL::TEXTURE_2D, tex_id
     LibGL.tex_image_2d LibGL::TEXTURE_2D, 0, LibGL::RGB, width, height, 0, LibGL::RGB, LibGL::UNSIGNED_BYTE, image_data as Void*
-    LibGL.tex_parameteri LibGL::TEXTURE_2D, LibGL::TEXTURE_MAG_FILTER, LibGL::NEAREST
-    LibGL.tex_parameteri LibGL::TEXTURE_2D, LibGL::TEXTURE_MIN_FILTER, LibGL::NEAREST
+    LibGL.tex_parameteri LibGL::TEXTURE_2D, LibGL::TEXTURE_MAG_FILTER, LibGL::LINEAR
+    LibGL.tex_parameteri LibGL::TEXTURE_2D, LibGL::TEXTURE_MIN_FILTER, LibGL::LINEAR_MIPMAP_LINEAR
+    LibGL.generate_mipmap LibGL::TEXTURE_2D
     SOIL.free_image_data image_data
 
     SOIL.load_texture("textures/crystal.png",
