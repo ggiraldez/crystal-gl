@@ -19,13 +19,22 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   TRUE  = 1_u8
   FALSE = 0_u8
 
-  FLOAT = 0x1406_u32
+  # DataType
+  BYTE            = 0x1400_u32
+  UNSIGNED_BYTE   = 0x1401_u32
+  SHORT           = 0x1402_u32
+  UNSIGNED_SHORT  = 0x1403_u32
+  INT             = 0x1404_u32
+  UNSIGNED_INT    = 0x1405_u32
+  FLOAT           = 0x1406_u32
+  DOUBLE          = 0x140A_u32
 
   ARRAY_BUFFER = 0x8892_u32
 
   STATIC_DRAW = 0x88E4_u32
 
   DEPTH_TEST = 0x0B71_u32
+  TEXTURE_2D = 0x0DE1_u32
 
   TRIANGLES = 0x0004_u32
 
@@ -57,21 +66,55 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   LINK_STATUS     = 0x8B82_u32
   INFO_LOG_LENGTH = 0x8B84_u32
 
+  # PixelFormat
+  STENCIL_INDEX   = 0x1901_u32
+  DEPTH_COMPONENT = 0x1902_u32
+  RED             = 0x1903_u32
+  GREEN           = 0x1904_u32
+  BLUE            = 0x1905_u32
+  ALPHA           = 0x1906_u32
+  RGB             = 0x1907_u32
+  RGBA            = 0x1908_u32
+
+  # StringName
   VENDOR     = 0x1F00_u32
   RENDERER   = 0x1F01_u32
   VERSION    = 0x1F02_u32
   EXTENSIONS = 0x1F03_u32
-  
+
+  # TextureMagFilter
+  NEAREST = 0x2600_i32
+  LINEAR  = 0x2601_i32
+
+  # TextureMinFilter
+  NEAREST_MIPMAP_NEAREST = 0x2700_i32
+  LINEAR_MIPMAP_NEAREST  = 0x2701_i32
+  NEAREST_MIPMAP_LINEAR  = 0x2702_i32
+  LINEAR_MIPMAP_LINEAR   = 0x2703_i32
+
+  # TextureParameterName
+  TEXTURE_MAG_FILTER = 0x2800_u32
+  TEXTURE_MIN_FILTER = 0x2801_u32
+  TEXTURE_WRAP_S     = 0x2802_u32
+  TEXTURE_WRAP_T     = 0x2803_u32
+
+  NUM_EXTENSIONS = 0x821D_u32
+
+  # Utility functions
   fun get_error = glGetError() : Enum
 
   fun get_string = glGetString(name : Enum) : Ubyte*
+  fun get_stringi = glGetStringi(name : Enum, index : Uint) : Ubyte*
+  fun get_integerv = glGetIntegerv(pname : Enum, params : Uint*) : Void
 
+  # State functions
   fun clear_color = glClearColor(red : Float, green : Float, blue : Float, alpha : Float) : Void
   fun clear = glClear(mask : Bitfield) : Void
   fun enable = glEnable(cap : Enum) : Void
   fun disable = glDisable(cap : Enum) : Void
   fun depth_func = glDepthFunc(func : Enum) : Void
 
+  # Vertex and array buffers
   fun gen_vertex_arrays = glGenVertexArrays(n : Sizei, ids : Uint*) : Void
   fun bind_vertex_array = glBindVertexArray(id : Uint) : Void
 
@@ -84,6 +127,13 @@ lib LibGL("`echo \"-framework OpenGL\"`")
   fun vertex_attrib_pointer = glVertexAttribPointer(index : Uint, size : Int, type : Enum, normalized : Boolean, stride : Sizei, pointer : Void*) : Void
   fun draw_arrays = glDrawArrays(mode : Enum, first : Int, count : Sizei) : Void
 
+  # Textures
+  fun gen_textures = glGenTextures(n : Sizei, textures : Uint*) : Void
+  fun bind_texture = glBindTexture(target : Enum, texure : Uint) : Void
+  fun tex_image_2d = glTexImage2D(target : Enum, level : Int, internal_format : Uint, width : Sizei, height : Sizei, border : Int, format : Enum, type : Enum, pixels : Void*) : Void
+  fun tex_parameteri = glTexParameteri(target : Enum, pname : Enum, param : Int) : Void
+
+  # Shaders and programs
   fun create_shader = glCreateShader(type : Enum) : Uint
   fun shader_source = glShaderSource(shader : Uint, count : Sizei, string : Char**, length : Int*) : Void
   fun compile_shader = glCompileShader(shader : Uint) : Void

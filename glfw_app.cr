@@ -13,7 +13,7 @@ class GlfwApp
     GLFW.window_hint GLFW::CONTEXT_VERSION_MINOR, 3
     GLFW.window_hint GLFW::OPENGL_FORWARD_COMPAT, 1
     GLFW.window_hint GLFW::OPENGL_PROFILE, GLFW::OPENGL_CORE_PROFILE
-     
+
     @window = GLFW.create_window 1024, 768, "Crystal OpenGL", nil, nil
 
     raise "Failed to open GLFW window" if @window.nil?
@@ -29,6 +29,7 @@ class GlfwApp
     GLFW.set_input_mode @window, GLFW::STICKY_KEYS, 1
 
     puts "OpenGL version: " + GL.version
+    puts "OpenGL extensions: " + GL.extensions.join(", ")
   end
 
   def run
@@ -37,7 +38,7 @@ class GlfwApp
 
     while true
       GLFW.poll_events
-      if GLFW.get_key(@window, GLFW::KEY_ESCAPE) == GLFW::PRESS && 
+      if GLFW.get_key(@window, GLFW::KEY_ESCAPE) == GLFW::PRESS &&
          GLFW.window_should_close(@window)
         break
       end

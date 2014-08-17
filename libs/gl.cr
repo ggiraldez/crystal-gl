@@ -40,6 +40,15 @@ module GL
     String.new(LibGL.get_string(LibGL::VERSION))
   end
 
+  def self.extensions
+    LibGL.get_integerv(LibGL::NUM_EXTENSIONS, out n)
+    extensions = [] of String
+    0.upto(n - 1) do |i|
+      extensions << String.new(LibGL.get_stringi(LibGL::EXTENSIONS, i.to_u32))
+    end
+    extensions
+  end
+
   def self.clear_color color
     case color.size
     when 4
