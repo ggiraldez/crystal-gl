@@ -6,6 +6,11 @@ require "soil"
 require "models/cube"
 
 class Scene
+  property! :position
+  property! :horizontal_angle
+  property! :vertical_angle
+  property! :fov
+
   def initialize
     @background_color = [0, 0, 0.4]
 
@@ -18,23 +23,35 @@ class Scene
     @model = Cube.new
 
     @texture = load_texture
+
+    @position = GLM.vec3(0,0,5)
+    @horizontal_angle = 3.14_f32
+    @vertical_angle = 0_f32
+    @fov = 45_f32
+    @scene_ratio = 4.0/3.0
+  end
+
+  def direction
+    GLM.vec3(Math.cos(@vertical_angle) * Math.sin(@horizontal_angle),
+             Math.sin(@vertical_angle),
+             Math.cos(@vertical_angle) * Math.cos(@horizontal_angle))
+  end
+
+  def right
+    GLM.vec3(Math.sin(@horizontal_angle - Math::PI / 2),
+             0,
+             Math.cos(@horizontal_angle - Math::PI / 2))
   end
 
   def mvp
+    dir = direction
+    up = right.cross(dir)
+
     # Setup ModelViewProjection matrix
-    projection = GLM.perspective 45.0, 4.0/3.0, 0.1, 100.0
-    view = GLM.look_at GLM.vec3(4,3,-3), GLM.vec3(0,0,0), GLM.vec3(0,1,0)
+    projection = GLM.perspective @fov, @scene_ratio, 0.1, 100.0
+    view = GLM.look_at @position, @position + dir, up
     model = GLM::Mat4.identity
-    mvp = projection * view * model
-
-    # puts "Projection"
-    # dump_mat4 projection
-    # puts "View"
-    # dump_mat4 view
-    # puts "MVP"
-    # dump_mat4 mvp
-
-    mvp
+    projection * view * model
   end
 
   def setup
@@ -59,12 +76,6 @@ class Scene
     LibGL.bind_buffer LibGL::ARRAY_BUFFER, @uv_buffer
     gl_checked LibGL.vertex_attrib_pointer 1_u32, 2, LibGL::FLOAT, LibGL::FALSE, 0, nil
 
-    # Use the shader program
-    @program.use
-
-    # Send the matrix to the shader program
-    gl_checked @program.set_uniform_matrix_4f "MVP", false, mvp
-
     LibGL.enable LibGL::DEPTH_TEST
     LibGL.depth_func LibGL::LESS
   end
@@ -73,6 +84,12 @@ class Scene
     # Clear the scene
     GL.clear_color @background_color
     LibGL.clear LibGL::COLOR_BUFFER_BIT | LibGL::DEPTH_BUFFER_BIT
+
+    # Use the shader program
+    @program.use
+
+    # Send the matrix to the shader program
+    gl_checked @program.set_uniform_matrix_4f "MVP", false, mvp
 
     # Draw the vertices
     gl_checked LibGL.draw_arrays LibGL::TRIANGLES, 0, @model.vertices.length

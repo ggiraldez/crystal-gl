@@ -78,11 +78,11 @@ module GLM
       TVec3(T).new(x - v.x, y - v.y, z - v.z)
     end
 
-    def *(a : T)
+    def *(a)
       TVec3(T).new(x * a, y * a, z * a)
     end
 
-    def /(a : T)
+    def /(a)
       TVec3(T).new(x / a, y / a, z / a)
     end
 

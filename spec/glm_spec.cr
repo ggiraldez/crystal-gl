@@ -1,29 +1,29 @@
 require "spec"
-require "../glm"
+require "glm"
 
 describe "GLM" do
   describe "Vec3" do
     it "returns the length of a vector" do
-      v = GLM::Vec3.new 1,2,3
+      v = GLM.vec3 1,2,3
       v.length.should eq(Math.sqrt(14).to_f32)
     end
 
     it "normalizes a vector" do
-      v = GLM::Vec3.new 1,1,1
+      v = GLM.vec3 1,1,1
       w = v.normalize
       a = 1/Math.sqrt(3).to_f32
       [w.x, w.y, w.z].should eq([a,a,a])
     end
 
     it "computes the dot product" do
-      v1 = GLM::Vec3.new 1,2,3
-      v2 = GLM::Vec3.new 4,5,6
+      v1 = GLM.vec3 1,2,3
+      v2 = GLM.vec3 4,5,6
       v1.dot(v2).should eq(4+10+18)
     end
 
     it "calculates the cross product" do
-      v1 = GLM::Vec3.new 1,0,0
-      v2 = GLM::Vec3.new 0,1,0
+      v1 = GLM.vec3 1,0,0
+      v2 = GLM.vec3 0,1,0
       v3 = v1.cross(v2)
       [v3.x, v3.y, v3.z].should eq([0,0,1])
       v4 = v2.cross(v1)

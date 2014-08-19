@@ -4,7 +4,7 @@ require "glew"
 require "utils"
 
 class SdlGlApp
-  def initialize
+  def initialize(@width = 1024, @height = 768)
     SDL.init
 
     info = SDL.get_video_info
@@ -18,8 +18,6 @@ class SdlGlApp
     puts "BPP: " + pixel_format.value.bits_per_pixel.to_s
     puts "Screen dimensions: " + info.value.current_w.to_s + "x" + info.value.current_h.to_s
 
-    width = 1024
-    height = 768
     bpp = pixel_format.value.bits_per_pixel
 
     SDL.gl_set_attribute(LibSDL::GLAttribute::GL_RED_SIZE, 5)
@@ -30,7 +28,7 @@ class SdlGlApp
 
     flags = LibSDL::OPENGL
 
-    @window = SDL.set_video_mode(width, height, bpp.to_i32, flags)
+    @window = SDL.set_video_mode(@width, @height, bpp.to_i32, flags)
 
     raise "Cannot set video mode" if @window.nil?
 

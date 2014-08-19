@@ -3,7 +3,7 @@ require "glew"
 require "gl"
 
 class GlfwApp
-  def initialize
+  def initialize(@width = 1024, @height = 768)
     unless GLFW.init
       raise "Failed to initialize GLFW"
     end
@@ -14,7 +14,7 @@ class GlfwApp
     GLFW.window_hint GLFW::OPENGL_FORWARD_COMPAT, 1
     GLFW.window_hint GLFW::OPENGL_PROFILE, GLFW::OPENGL_CORE_PROFILE
 
-    @window = GLFW.create_window 1024, 768, "Crystal OpenGL", nil, nil
+    @window = GLFW.create_window @width, @height, "Crystal OpenGL", nil, nil
 
     raise "Failed to open GLFW window" if @window.nil?
 
@@ -27,6 +27,7 @@ class GlfwApp
     check_error "after GLEW initialization"
 
     GLFW.set_input_mode @window, GLFW::STICKY_KEYS, 1
+    GLFW.set_input_mode @window, GLFW::CURSOR, GLFW::CURSOR_DISABLED
 
     puts "OpenGL version: " + GL.version
     puts "OpenGL extensions: " + GL.extensions.join(", ")
@@ -34,7 +35,7 @@ class GlfwApp
 
   def run
     frames = 0
-    start = GLFW.get_time
+    start = last_time = GLFW.get_time
 
     while true
       GLFW.poll_events
@@ -43,9 +44,14 @@ class GlfwApp
         break
       end
 
-      render_frame
+      current_time = GLFW.get_time
+      delta_time = current_time - last_time
+
+      process_inputs delta_time
+      render_frame delta_time
 
       frames += 1
+      last_time = current_time
 
       # Swap buffers and do the GLFW events bookkeeping
       GLFW.swap_buffers @window
@@ -63,6 +69,7 @@ class GlfwApp
     GLFW.terminate
   end
 
+  abstract def process_inputs
   abstract def render_frame
   abstract def cleanup
 end
