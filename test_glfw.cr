@@ -18,8 +18,8 @@ class TestApp < GlfwApp
     # process cursor position
     GLFW.get_cursor_pos @window, out xpos, out ypos
 
-    @scene.horizontal_angle += @mouse_speed * delta_time * (xpos - @last_xpos)
-    @scene.vertical_angle += @mouse_speed * delta_time * (ypos - @last_ypos)
+    @scene.horizontal_angle += @mouse_speed * delta_time * (@last_xpos - xpos)
+    @scene.vertical_angle += @mouse_speed * delta_time * (@last_ypos - ypos)
 
     @last_xpos = xpos
     @last_ypos = ypos
