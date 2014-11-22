@@ -1,6 +1,7 @@
-lib GLFW("glfw3")
-  type Window : Void*
-  type Monitor : Void*
+@[Link("glfw3")]
+lib GLFW
+  type Window = Void*
+  type Monitor = Void*
 
   SAMPLES = 0x0002100D_i32
 

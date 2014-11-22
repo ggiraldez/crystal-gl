@@ -109,8 +109,9 @@ module GL
 
       LibGL.get_shader_iv @shader_id, LibGL::COMPILE_STATUS, out result
       LibGL.get_shader_iv @shader_id, LibGL::INFO_LOG_LENGTH, out info_log_length
-      info_log = String.new_with_length(info_log_length) do |buffer|
+      info_log = String.new(info_log_length) do |buffer|
         LibGL.get_shader_info_log @shader_id, info_log_length, nil, buffer
+        {info_log_length, info_log_length}
       end
       raise "Error compiling shader: #{info_log}" unless result
 
@@ -141,8 +142,9 @@ module GL
 
       LibGL.get_program_iv @program_id, LibGL::LINK_STATUS, out result
       LibGL.get_program_iv @program_id, LibGL::INFO_LOG_LENGTH, out info_log_length
-      info_log = String.new_with_length(info_log_length) do |buffer|
+      info_log = String.new(info_log_length) do |buffer|
         LibGL.get_program_info_log @program_id, info_log_length, nil, buffer
+        {info_log_length, info_log_length}
       end
       raise "Error linking shader program: #{info_log}" unless result
 

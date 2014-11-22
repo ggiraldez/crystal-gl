@@ -1,6 +1,8 @@
 require "lib_gl"
 
-lib SOIL("SOIL")
+@[Link("SOIL")]
+@[Link(framework: "CoreFoundation")] ifdef darwin
+lib SOIL
   LOAD_AUTO = 0
   LOAD_L    = 1
   LOAD_LA   = 2
@@ -25,10 +27,5 @@ lib SOIL("SOIL")
   fun load_image = SOIL_load_image(filename : UInt8*, width : Int32*, height : Int32*, channels : Int32*, force_channels : Int32) : UInt8*
   fun free_image_data = SOIL_free_image_data(data : UInt8*) : Void
   fun last_result = SOIL_last_result() : UInt8*
-end
-
-ifdef darwin
-  lib LibCoreFoundation("`echo \"-framework CoreFoundation\"`")
-  end
 end
 

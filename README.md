@@ -8,10 +8,10 @@ The SDL version is broken since SDL 1.2 only creates OpenGL 2 contexts and there
 
 ## Running
 
-You need Crystal 0.4 or later. You also need to have GLFW 3, GLEW (`brew install glfw3 glew` should do it), and [libSOIL](https://github.com/ggiraldez/libSOIL) which is being used to load textures. This might be eventually deprecated by SDL2_image when we make bindings for SDL2.
+You need Crystal 0.5 or later. You also need to have GLFW 3, GLEW (`brew install glfw3 glew` should do it), and [libSOIL](https://github.com/ggiraldez/libSOIL) which is being used to load textures. This might be eventually deprecated by SDL2_image when we make bindings for SDL2.
 
 With all dependencies installed, run:
 
 ```sh
-$ crystal --run test_glfw.cr
+$ crystal test_glfw.cr
 ```

@@ -1,4 +1,5 @@
-lib LibGL("`echo \"-framework OpenGL\"`")
+@[Link(framework: "OpenGL")] ifdef darwin
+lib LibGL
   alias Enum = UInt32     # unsigned int
   alias Boolean = UInt8   # unsigned char
   alias Bitfield = UInt32 # unsigned int

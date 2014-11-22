@@ -1,6 +1,7 @@
 require "lib_gl"
 
-lib GLEW("glew")
+@[Link("glew")]
+lib GLEW
   OK = 0
 
   $experimental = glewExperimental : LibGL::Boolean
