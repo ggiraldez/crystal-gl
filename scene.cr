@@ -1,9 +1,9 @@
 require "gl"
 require "glm"
-require "utils"
+require "./utils"
 require "soil"
 
-require "models/cube"
+require "./models/cube"
 
 class Scene
   property! :position

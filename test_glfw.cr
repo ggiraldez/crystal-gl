@@ -1,5 +1,5 @@
-require "glfw_app"
-require "scene"
+require "./glfw_app"
+require "./scene"
 
 class TestApp < GlfwApp
   def initialize
