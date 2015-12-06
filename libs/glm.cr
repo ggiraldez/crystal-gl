@@ -37,12 +37,12 @@ module GLM
     end
 
     def [](i : Int32)
-      raise IndexOutOfBounds.new if i >= 3 || i < 0
+      raise IndexError.new if i >= 3 || i < 0
       @buffer[i]
     end
 
     def []=(i : Int32, value)
-      raise IndexOutOfBounds.new if i >= 3 || i < 0
+      raise IndexError.new if i >= 3 || i < 0
       @buffer[i] = value
     end
 
@@ -179,7 +179,7 @@ module GLM
     end
 
     def [](i)
-      raise IndexOutOfBounds.new if i < 0 || i >= 16
+      raise IndexError.new if i < 0 || i >= 16
       @buffer[i]
     end
 
@@ -188,7 +188,7 @@ module GLM
     end
 
     def []=(i, value : T)
-      raise IndexOutOfBounds.new if i < 0 || i >= 16
+      raise IndexError.new if i < 0 || i >= 16
       @buffer[i] = value
     end
 
