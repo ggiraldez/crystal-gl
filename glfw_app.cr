@@ -24,7 +24,7 @@ class GlfwApp
     unless GLEW.init == GLEW::OK
       raise "Failed to initialize GLEW"
     end
-    check_error "after GLEW initialization"
+    check_error "after GLEW initialization (ignore on OSX)"
 
     GLFW.set_input_mode @window, GLFW::STICKY_KEYS, 1
     GLFW.set_input_mode @window, GLFW::CURSOR, GLFW::CURSOR_DISABLED
