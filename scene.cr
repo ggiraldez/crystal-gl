@@ -60,11 +60,11 @@ class Scene
 
     # Bind and set the VBO (vertex buffer object) data
     LibGL.bind_buffer LibGL::ARRAY_BUFFER, @vertex_buffer
-    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.vertices.size * sizeof(Float32), (@model.vertices.buffer as Void*), LibGL::STATIC_DRAW
+    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.vertices.size * sizeof(Float32), (@model.vertices.to_unsafe as Pointer(Void)), LibGL::STATIC_DRAW
 
     # Load the UV data into the uv_buffer
     LibGL.bind_buffer LibGL::ARRAY_BUFFER, @uv_buffer
-    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.uv.size * sizeof(Float32), (@model.uv.buffer as Void*), LibGL::STATIC_DRAW
+    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.uv.size * sizeof(Float32), (@model.uv.to_unsafe as Pointer(Void)), LibGL::STATIC_DRAW
 
     # Enable and configure the attribute 0 for each vertex position
     LibGL.enable_vertex_attrib_array 0_u32

@@ -49,7 +49,7 @@ module GL
     extensions
   end
 
-  def self.clear_color color
+  def self.clear_color(color)
     case color.size
     when 4
       clear_color color[0], color[1], color[2], color[3]
@@ -60,7 +60,7 @@ module GL
     end
   end
 
-  def self.clear_color red, green, blue, alpha
+  def self.clear_color(red, green, blue, alpha)
     LibGL.clear_color red.to_f32, green.to_f32, blue.to_f32, alpha.to_f32
   end
 
@@ -99,7 +99,7 @@ module GL
     end
 
     def with_source(source : String)
-      p = source.cstr
+      p = source.to_unsafe
       LibGL.shader_source @shader_id, 1, pointerof(p), nil
       self
     end
@@ -157,7 +157,7 @@ module GL
     end
 
     def set_uniform_matrix_4f(name, transpose, data)
-      location = LibGL.get_uniform_location @program_id, name.cstr
+      location = LibGL.get_uniform_location @program_id, name
       LibGL.uniform_matrix_4fv location, 1, GL.to_boolean(transpose), data
     end
   end
