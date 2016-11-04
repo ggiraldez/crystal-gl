@@ -75,4 +75,3 @@ class SdlGlApp
   abstract def render_frame
   abstract def cleanup
 end
-

@@ -6,6 +6,5 @@ lib GLEW
 
   $experimental = glewExperimental : LibGL::Boolean
 
-  fun init = glewInit() : Int32
+  fun init = glewInit : Int32
 end
-
