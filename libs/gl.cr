@@ -76,22 +76,13 @@ module GL
     end
   end
 
-  class Shader
-    def self.vertex(source = nil)
-      shader = new LibGL::VERTEX_SHADER
-      shader.with_source(source) if source
-      shader
-    end
+  abstract class Shader
+    abstract def create
+    @shader_id : UInt32
 
-    def self.fragment(source = nil)
-      shader = new LibGL::FRAGMENT_SHADER
-      shader.with_source(source) if source
-      shader
-    end
-
-    def initialize(type)
-      @type = type
-      @shader_id = LibGL.create_shader(@type)
+    def initialize(source : String?)
+      @shader_id = create
+      with_source(source) if !source.nil?
     end
 
     def shader_id
@@ -161,5 +152,14 @@ module GL
       LibGL.uniform_matrix_4fv location, 1, GL.to_boolean(transpose), data
     end
   end
+  class VertexShader < Shader
+    def create
+      LibGL.create_shader(LibGL::VERTEX_SHADER)
+    end
+  end
+  class FragmentShader < Shader
+    def create
+      LibGL.create_shader(LibGL::FRAGMENT_SHADER)
+    end
+  end
 end
-

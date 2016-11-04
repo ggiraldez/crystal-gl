@@ -1,0 +1,3 @@
+[submodule "soil"]
+	path = soil
+	url = https://github.com/zatherz/libSOIL

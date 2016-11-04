@@ -1,7 +1,7 @@
 require "sdl_gl_app"
 require "scene"
 
-class TestApp < SdlGlApp
+class TestApp < SDLGLApp
   def initialize
     super
 
@@ -23,4 +23,3 @@ begin
 rescue ex
   puts "FATAL ERROR: #{ex}"
 end
-

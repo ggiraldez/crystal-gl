@@ -1,7 +1,7 @@
 require "./glfw_app"
 require "./scene"
 
-class TestApp < GlfwApp
+class TestApp < GLFWApp
   def initialize
     super
 
@@ -53,4 +53,3 @@ begin
 rescue ex
   puts "FATAL ERROR: #{ex}"
 end
-
