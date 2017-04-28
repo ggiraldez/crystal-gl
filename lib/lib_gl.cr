@@ -1,4 +1,4 @@
-@[Link(framework: "OpenGL")] ifdef darwin
+@[Link(framework: "OpenGL")] # ifdef darwin
 lib LibGL
   alias Enum = UInt32     # unsigned int
   alias Boolean = UInt8   # unsigned char

@@ -11,6 +11,10 @@ class Scene
   property! :vertical_angle
   property! :fov
 
+  @program : GL::ShaderProgram
+  @texture : UInt32
+  @scene_ratio : Float64
+
   def initialize
     @background_color = [0, 0, 0.4]
 
@@ -24,7 +28,7 @@ class Scene
 
     @texture = load_texture
 
-    @position = GLM.vec3(0,0,5)
+    @position = GLM.vec3(0, 0, 5)
     @horizontal_angle = 3.14_f32
     @vertical_angle = 0_f32
     @fov = 45_f32
@@ -33,14 +37,14 @@ class Scene
 
   def direction
     GLM.vec3(Math.cos(@vertical_angle) * Math.sin(@horizontal_angle),
-             Math.sin(@vertical_angle),
-             Math.cos(@vertical_angle) * Math.cos(@horizontal_angle))
+      Math.sin(@vertical_angle),
+      Math.cos(@vertical_angle) * Math.cos(@horizontal_angle))
   end
 
   def right
     GLM.vec3(Math.sin(@horizontal_angle - Math::PI / 2),
-             0,
-             Math.cos(@horizontal_angle - Math::PI / 2))
+      0,
+      Math.cos(@horizontal_angle - Math::PI / 2))
   end
 
   def mvp
@@ -60,11 +64,11 @@ class Scene
 
     # Bind and set the VBO (vertex buffer object) data
     LibGL.bind_buffer LibGL::ARRAY_BUFFER, @vertex_buffer
-    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.vertices.size * sizeof(Float32), (@model.vertices.to_unsafe as Pointer(Void)), LibGL::STATIC_DRAW
+    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.vertices.size * sizeof(Float32), (@model.vertices.to_unsafe.as(Pointer(Void))), LibGL::STATIC_DRAW
 
     # Load the UV data into the uv_buffer
     LibGL.bind_buffer LibGL::ARRAY_BUFFER, @uv_buffer
-    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.uv.size * sizeof(Float32), (@model.uv.to_unsafe as Pointer(Void)), LibGL::STATIC_DRAW
+    LibGL.buffer_data LibGL::ARRAY_BUFFER, @model.uv.size * sizeof(Float32), (@model.uv.to_unsafe.as(Pointer(Void))), LibGL::STATIC_DRAW
 
     # Enable and configure the attribute 0 for each vertex position
     LibGL.enable_vertex_attrib_array 0_u32
@@ -100,7 +104,7 @@ class Scene
     LibGL.disable_vertex_attrib_array 0_u32
   end
 
-  def load_shaders
+  def load_shaders : GL::ShaderProgram
     vertex_shader_code = File.read("shaders/vertex_shader.glsl")
     fragment_shader_code = File.read("shaders/fragment_shader.glsl")
 
@@ -122,20 +126,19 @@ class Scene
     image_data = SOIL.load_image("textures/crystal.png", out width, out height, out channels, SOIL::LOAD_RGB)
     LibGL.gen_textures 1, out tex_id
     LibGL.bind_texture LibGL::TEXTURE_2D, tex_id
-    LibGL.tex_image_2d LibGL::TEXTURE_2D, 0, LibGL::RGB, width, height, 0, LibGL::RGB, LibGL::UNSIGNED_BYTE, image_data as Void*
+    LibGL.tex_image_2d LibGL::TEXTURE_2D, 0, LibGL::RGB, width, height, 0, LibGL::RGB, LibGL::UNSIGNED_BYTE, image_data.as(Void*)
     LibGL.tex_parameteri LibGL::TEXTURE_2D, LibGL::TEXTURE_MAG_FILTER, LibGL::LINEAR
     LibGL.tex_parameteri LibGL::TEXTURE_2D, LibGL::TEXTURE_MIN_FILTER, LibGL::LINEAR_MIPMAP_LINEAR
     LibGL.generate_mipmap LibGL::TEXTURE_2D
     SOIL.free_image_data image_data
 
     SOIL.load_texture("textures/crystal.png",
-                      SOIL::LOAD_AUTO,
-                      SOIL::CREATE_NEW_ID,
-                      0_u32)
+      SOIL::LOAD_AUTO,
+      SOIL::CREATE_NEW_ID,
+      0_u32)
 
     puts "Loaded texture #{tex_id}"
 
     tex_id
   end
 end
-

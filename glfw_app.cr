@@ -2,7 +2,7 @@ require "glfw"
 require "glew"
 require "gl"
 
-class GlfwApp
+abstract class GlfwApp
   def initialize(@width = 1024, @height = 768)
     unless GLFW.init
       raise "Failed to initialize GLFW"
@@ -16,7 +16,7 @@ class GlfwApp
 
     @window = GLFW.create_window @width, @height, "Crystal OpenGL", nil, nil
 
-    raise "Failed to open GLFW window" if @window.nil?
+    raise "Failed to open GLFW window" if @window.null?
 
     GLFW.set_current_context @window
 
@@ -69,8 +69,7 @@ class GlfwApp
     GLFW.terminate
   end
 
-  abstract def process_inputs
-  abstract def render_frame
+  abstract def process_inputs(delta_time)
+  abstract def render_frame(delta_time)
   abstract def cleanup
 end
-
